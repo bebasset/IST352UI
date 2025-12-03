@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Meeting Makers – Event Bid Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f4f6fb;
+      color: #111827;
+      padding: 32px 16px;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Logo */
+    .logo {
+      display: block;
+      margin: 0 auto 30px;
+      height: 145px;        /* adjust as needed */
+      object-fit: contain;
+    }
+
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; text-align: center; }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      display: grid;
+      grid-template-columns: 2fr 1.2fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .card { grid-template-columns: 1fr; }
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 14px;
+      margin: 20px 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #4b5563;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    label span.req {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+      background: #f9fafb;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .helper {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .goal-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .goal-pill {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 6px 12px;
+      font-size: 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .goal-pill.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 10px 18px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    /* Summary panel */
+    .summary {
+      border-radius: 16px;
+      background: #0b1120;
+      color: #e5e7eb;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .summary-header {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(96, 165, 250, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.45);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #60a5fa, #22c55e);
+      transition: width 0.25s;
+    }
+
+    .summary-item-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 3px;
+    }
+
+    .summary-item-body {
+      font-size: 13px;
+    }
+
+    .summary-pill-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .summary-pill {
+      font-size: 11px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Logo added here -->
+    <img src="meetingmakers.png" alt="Meeting Makers logo" class="logo" />
+
+    <h1>Meeting Makers</h1>
+    <p class="subtitle">
+      Request a customized bid and get a live snapshot of your event as you fill in the details.
+    </p>
+
+    <div class="card">
+      <!-- LEFT: FORM -->
+      <form id="bidForm">
+        <div class="section-title">Event Bid Request</div>
+        <p class="helper" style="margin-bottom:10px;">
+          Please provide the details about your event so we can prepare a tailored proposal.
+        </p>
+
+        <!-- Primary goal -->
+        <h2>What matters most for this event?</h2>
+        <div class="goal-pills" id="goalPills">
+          <div class="goal-pill" data-goal="Stay on budget">Stay on budget</div>
+          <div class="goal-pill" data-goal="Premium experience">Premium experience</div>
+          <div class="goal-pill" data-goal="Networking & engagement">Networking & engagement</div>
+          <div class="goal-pill" data-goal="Team building & fun">Team building & fun</div>
+        </div>
+        <p class="helper">
+          This doesn’t change your price – it simply helps us design a bid that fits your priorities.
+        </p>
+
+        <div class="section-title">Contact Information</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" name="fullName" placeholder="John Doe" required />
+          </div>
+          <div class="field">
+            <label>Email Address <span class="req">*</span></label>
+            <input type="email" name="email" placeholder="john@example.com" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+1 (555) 000-0000" />
+        </div>
+
+        <div class="section-title">Event Details</div>
+
+        <div class="field">
+          <label>Event City <span class="req">*</span></label>
+          <input type="text" name="city" placeholder="e.g., New York, Los Angeles, Chicago" required />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Start Date <span class="req">*</span></label>
+            <input type="date" name="startDate" required />
+          </div>
+          <div class="field">
+            <label>End Date</label>
+            <input type="date" name="endDate" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Anticipated Number of Attendees <span class="req">*</span></label>
+          <input type="number" name="attendees" min="1" placeholder="e.g., 50" required />
+        </div>
+
+        <div class="field">
+          <label>Budget Range <span class="req">*</span></label>
+          <select name="budget" required>
+            <option value="">Select your budget range</option>
+            <option value="Under $10,000">Under $10,000</option>
+            <option value="$10,000 – $25,000">$10,000 – $25,000</option>
+            <option value="$25,000 – $50,000">$25,000 – $50,000</option>
+            <option value="$50,000+">$50,000+</option>
+          </select>
+          <p class="helper">
+            We use this to match venues and activities that are realistic for your group size and city.
+          </p>
+        </div>
+
+        <div class="field">
+          <label>Desired External Activities</label>
+          <textarea
+            name="activities"
+            placeholder="Describe any external activities, team building exercises, tours, or special events you'd like to include."
+          ></textarea>
+        </div>
+
+        <div class="buttons">
+          <button type="submit" class="btn-primary">Submit Bid Request</button>
+          <button type="reset" class="btn-secondary">Clear Form</button>
+        </div>
+      </form>
+
+      <!-- RIGHT: LIVE SUMMARY -->
+      <aside class="summary">
+        <div class="summary-header">
+          <span>Live Event Snapshot</span>
+          <span class="summary-badge" id="goalBadge">No goal selected yet</span>
+        </div>
+
+        <div>
+          <div class="summary-item-title">Form completion</div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <p class="helper" id="progressText" style="margin-top:6px;">0% complete</p>
+        </div>
+
+        <div>
+          <div class="summary-item-title">Overview</div>
+          <div class="summary-item-body" id="overviewSummary">
+            Start filling out the form to see a high-level overview of your event appear here.
+          </div>
+        </div>
+
+        <div>
+          <div class="summary-item-title">Logistics</div>
+          <div class="summary-item-body" id="logisticsSummary">
+            City, dates, and attendees will be summarized here.
+          </div>
+        </div>
+
+        <div>
+          <div class="summary-item-title">Budget & Focus Areas</div>
+          <div class="summary-item-body" id="budgetSummary">
+            Your budget and key focus will help us choose the right venues and activities.
+            <div class="summary-pill-row" id="pillRow"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Progress calculation: count required fields + goal selection.
+    const requiredSelectors = [
+      'input[name="fullName"]',
+      'input[name="email"]',
+      'input[name="city"]',
+      'input[name="startDate"]',
+      'input[name="attendees"]',
+      'select[name="budget"]'
+    ];
+
+    const goalPills = document.getElementById("goalPills");
+    const goalBadge = document.getElementById("goalBadge");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const overviewSummary = document.getElementById("overviewSummary");
+    const logisticsSummary = document.getElementById("logisticsSummary");
+    const budgetSummary = document.getElementById("budgetSummary");
+    const pillRow = document.getElementById("pillRow");
+
+    let selectedGoal = "";
+
+    goalPills.addEventListener("click", (e) => {
+      const pill = e.target.closest(".goal-pill");
+      if (!pill) return;
+      [...goalPills.children].forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      selectedGoal = pill.dataset.goal;
+      goalBadge.textContent = selectedGoal;
+      updateSummaries();
+      updateProgress();
+    });
+
+    function getFieldValue(selector) {
+      const el = document.querySelector(selector);
+      return el ? el.value.trim() : "";
+    }
+
+    function updateProgress() {
+      let filled = 0;
+      requiredSelectors.forEach(sel => {
+        if (getFieldValue(sel)) filled++;
+      });
+      if (selectedGoal) filled++;
+      const total = requiredSelectors.length + 1; // +1 for goal
+      const percent = Math.round((filled / total) * 100);
+      progressBar.style.width = percent + "%";
+      progressText.textContent = percent + "% complete";
+    }
+
+    function updateSummaries() {
+      const name = getFieldValue('input[name="fullName"]') || "Your event";
+      const city = getFieldValue('input[name="city"]');
+      const attendees = getFieldValue('input[name="attendees"]');
+      const start = getFieldValue('input[name="startDate"]');
+      const end = getFieldValue('input[name="endDate"]');
+      const budget = getFieldValue('select[name="budget"]');
+      const activities = getFieldValue('textarea[name="activities"]');
+
+      // Overview
+      let overview = "";
+      if (city || attendees) {
+        overview += `${name} `;
+        if (attendees) overview += `for about ${attendees} attendee${attendees === "1" ? "" : "s"} `;
+        if (city) overview += `in ${city} `;
+        overview += "is coming together nicely.";
+      } else {
+        overview = "As you share your city, dates, and attendees, we'll build a clear summary here for your records and our bid.";
+      }
+      overviewSummary.textContent = overview;
+
+      // Logistics
+      let logistics = "";
+      if (city) logistics += `City: ${city}. `;
+      if (start) logistics += `Start: ${start}. `;
+      if (end) logistics += `End: ${end}. `;
+      if (attendees) logistics += `Expected attendees: ${attendees}.`;
+      logisticsSummary.textContent = logistics || "We’ll summarize key logistics here once you set your city, dates, and attendee count.";
+
+      // Budget & focus
+      let budgetText = "";
+      pillRow.innerHTML = "";
+      if (budget) {
+        budgetText += `Budget range selected: ${budget}. `;
+        const pill = document.createElement("span");
+        pill.className = "summary-pill";
+        pill.textContent = budget;
+        pillRow.appendChild(pill);
+      }
+      if (selectedGoal) {
+        budgetText += `Primary goal: ${selectedGoal}. `;
+        const pill = document.createElement("span");
+        pill.className = "summary-pill";
+        pill.textContent = selectedGoal;
+        pillRow.appendChild(pill);
+      }
+      if (activities) {
+        budgetText += "You’ve requested specific external activities, which we’ll factor into venue and timing.";
+        const pill = document.createElement("span");
+        pill.className = "summary-pill";
+        pill.textContent = "Activities noted";
+        pillRow.appendChild(pill);
+      }
+      if (!budgetText) {
+        budgetText = "Choose a budget range and primary goal to help us align venues and activities with your expectations.";
+      }
+      budgetSummary.firstChild && (budgetSummary.firstChild.textContent = budgetText);
+    }
+
+    document.getElementById("bidForm").addEventListener("input", () => {
+      updateProgress();
+      updateSummaries();
+    });
+
+    document.getElementById("bidForm").addEventListener("reset", () => {
+      setTimeout(() => {
+        selectedGoal = "";
+        [...goalPills.children].forEach(p => p.classList.remove("active"));
+        goalBadge.textContent = "No goal selected yet";
+        pillRow.innerHTML = "";
+        overviewSummary.textContent =
+          "Start filling out the form to see a high-level overview of your event appear here.";
+        logisticsSummary.textContent =
+          "City, dates, and attendees will be summarized here.";
+        budgetSummary.firstChild && (budgetSummary.firstChild.textContent =
+          "Your budget and key focus will help us choose the right venues and activities.");
+        updateProgress();
+      }, 0);
+    });
+
+    document.getElementById("bidForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Bid request submitted! (Here you would send data to your backend.)");
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
+
